@@ -1,4 +1,4 @@
-import { NavBarElement, EntityObject } from './component'
+import { NavBarElement, ContentObject, AddContent } from './component'
 
 const NavBarBlock = (props) => {
     const elem = props.names.map((name, i) => {
@@ -16,9 +16,9 @@ const NavBarBlock = (props) => {
     );
 };
 
-const EntityObjectBlock = (props) => {
+const ContentBlock = (props) => {
     const elem = props.content.map((e, i) => {
-        return <EntityObject name={e.name} type={e.type} />
+        return <ContentObject name={e.name} type={e.type} extension={e.extension} />
     })
 
     return (
@@ -28,6 +28,7 @@ const EntityObjectBlock = (props) => {
             flexWrap: 'wrap',
         }}>
             {elem}
+            <AddContent />
         </div>
     );
 }
@@ -35,5 +36,5 @@ const EntityObjectBlock = (props) => {
 
 export {
     NavBarBlock,
-    EntityObjectBlock,
+    ContentBlock,
 };
