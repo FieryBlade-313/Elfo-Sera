@@ -1,0 +1,18 @@
+.navBarElement {
+    padding: 10px 10px;
+    display: block;
+    font-family: Consolas;
+    overflow: hidden;
+}
+
+.content {
+    display: flex;
+    width: 150px;
+    height: 150px;
+    margin: 10px 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #2b2b2b38;
+    border-radius: 10px;
+}

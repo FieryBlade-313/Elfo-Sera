@@ -1,23 +1,10 @@
-import logo from './logo.svg';
-import './App.css';
+import { NavBarBlock, EntityObjectBlock } from './componentBlock'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <NavBarBlock names={['root', 'home', 'usr']} />
+      <EntityObjectBlock content={[{ name: "Home", type: "folder" }, { name: "index.js", type: 'file' }, { name: "index.js", type: 'file' }, { name: "index.js", type: 'file' }, { name: "index.js", type: 'file' }, { name: "index.js", type: 'file' }]} />
     </div>
   );
 }
