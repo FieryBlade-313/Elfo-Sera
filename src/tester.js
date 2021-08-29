@@ -4,6 +4,8 @@ var root = new Folder("root", null);
 var home = root.AddFolder("Home");
 var file = root.AddFile("index.js");
 
+console.log(file.GetExtension())
+
 root.DebugDisplay();
 
 home.AddFile("sample1.jpg");

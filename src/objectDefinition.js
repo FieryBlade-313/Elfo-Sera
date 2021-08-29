@@ -1,4 +1,4 @@
-class SkeletonClass {
+class ContentClass {
     constructor(name, parent, type) {
         this.name = name;
         this.parent = parent != null ? parent : this;
@@ -10,7 +10,7 @@ class SkeletonClass {
     }
 }
 
-class File extends SkeletonClass {
+class File extends ContentClass {
     constructor(name, parent) {
         super(name, parent, 'file');
     }
@@ -29,9 +29,13 @@ class File extends SkeletonClass {
         delete this.parent.files[this.name];
     }
 
+    GetExtension() {
+        return this.name.substring(this.name.lastIndexOf('.'));
+    }
+
 }
 
-class Folder extends SkeletonClass {
+class Folder extends ContentClass {
 
     constructor(name, parent) {
         super(name, parent, 'folder');
