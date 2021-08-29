@@ -3,6 +3,12 @@
     display: block;
     font-family: Consolas;
     overflow: hidden;
+    transition:all 0.2s;
+    user-select: none;
+}
+
+.navBarElement:hover {
+    background-color: rgb(236, 236, 236);
 }
 
 .content {
@@ -15,6 +21,7 @@
     flex-direction: column;
     transition: all 0.4s;
     border-radius: 10px;
+    user-select: none;
 }
 
 .content:hover {

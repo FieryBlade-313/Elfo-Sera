@@ -11,8 +11,8 @@ import {
 const NavBarBlock = (props) => {
     const elem = props.stack.map((content, i) => {
         if (i === props.stack.length - 1)
-            return <NavBarElement last={true} name={content.name} key={i} />
-        return <NavBarElement last={false} name={content.name} key={i} />
+            return <NavBarElement content={content} stack={props.stack} handleNavStack={props.handleNavStack} last={true} key={i} />
+        return <NavBarElement content={content} stack={props.stack} handleNavStack={props.handleNavStack} last={false} key={i} />
     });
 
     return (

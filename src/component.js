@@ -12,20 +12,30 @@ const clone = (obj) => {
 }
 
 const NavBarElement = (props) => {
+
+    const handleNavigation = (e) => {
+        var temp;
+        while ((temp = props.stack.pop()) != props.content);
+        props.stack.push(temp);
+        props.handleNavStack([...props.stack]);
+    }
     return (
-        <div className='navBarElement' style={{ color: (props.last ? '#2E2F2F' : '#858B8F') }}>
-            {props.name}
+        <div className='navBarElement' style={{ color: (props.last ? '#2E2F2F' : '#858B8F') }} onClick={handleNavigation}>
+            {props.content.name}
         </div>
     );
 }
 
 const BackButton = (props) => {
+
+    const disableOpacity = '0.6';
     return (
         <img style={{
             maxHeight: '60px',
             maxWidth: '60px',
             margin: '10px 6px',
             transform: 'Rotate(-90deg)',
+            opacity: (props.stack.length > 1) ? 1 : disableOpacity,
         }} src={backBtn} alt={props.type} onClick={(e) => {
             if (props.stack.length > 1) {
                 props.stack.pop();
@@ -137,7 +147,26 @@ const AddContent = (props) => {
 
 const RenameModal = (props) => {
 
-    const [name, setName] = useState('');
+
+    const handleRename = () => {
+        try {
+
+            props.selected.Rename(name);
+
+            props.modalOpenState(false);
+            props.handleCurrFolder(clone(props.currFolder));
+        }
+        catch (err) {
+            var msg = ''
+            if (err === 'No name given')
+                msg = 'Enter a value for the name'
+            else if (err === 'Duplicate')
+                msg = name + " already exists"
+            setErrorMessage(msg);
+        }
+    }
+
+    const [name, setName] = useState(props.selected.name);
     const [errMessage, setErrorMessage] = useState('');
 
     const modalContent = <div style={{
@@ -146,7 +175,10 @@ const RenameModal = (props) => {
         alignItems: 'center',
     }}>
         <h3>Rename</h3>
-        <input placeholder='name' onChange={(e) => setName(e.target.value)}></input>
+        <input autoFocus placeholder='name' value={name} onChange={(e) => setName(e.target.value)} onKeyPress={(e) => {
+            if (e.key === 'Enter')
+                handleRename();
+        }}></input>
         <div style={{
             color: 'red',
             fontSize: '0.8em',
@@ -155,27 +187,33 @@ const RenameModal = (props) => {
     </div>
 
     return (
-        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Rename' submitHandler={() => {
-            try {
-
-                props.selected.Rename(name);
-
-                props.modalOpenState(false);
-                props.handleCurrFolder(clone(props.currFolder));
-            }
-            catch (err) {
-                var msg = ''
-                if (err === 'No name given')
-                    msg = 'Enter a value for the name'
-                else if (err === 'Duplicate')
-                    msg = name + " already exists"
-                setErrorMessage(msg);
-            }
-        }} />
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Rename' submitHandler={handleRename} />
     );
 }
 
 const AddModal = (props) => {
+
+    const handleAdd = () => {
+        try {
+            if (isFile) {
+                props.currFolder.AddFile(name);
+            }
+            else {
+                props.currFolder.AddFolder(name);
+            }
+
+            props.modalOpenState(false);
+            props.handleCurrFolder(clone(props.currFolder));
+        }
+        catch (err) {
+            var msg = ''
+            if (err === 'No name given')
+                msg = 'Enter a value for the name'
+            else if (err === 'Duplicate')
+                msg = name + " already exists"
+            setErrorMessage(msg);
+        }
+    }
 
     const [name, setName] = useState('');
     const [errMessage, setErrorMessage] = useState('');
@@ -201,7 +239,10 @@ const AddModal = (props) => {
                 color: !isFile ? 'white' : 'black',
             }} onClick={(e) => setFileSelectState(false)}>Folder</div>
         </div>
-        <input placeholder={((isFile) ? 'file' : 'folder') + ' name'} onChange={(e) => setName(e.target.value)}></input>
+        <input autoFocus placeholder={((isFile) ? 'file' : 'folder') + ' name'} onChange={(e) => setName(e.target.value)} onKeyPress={(e) => {
+            if (e.key === 'Enter')
+                handleAdd();
+        }}></input>
         <div style={{
             color: 'red',
             fontSize: '0.8em',
@@ -211,28 +252,7 @@ const AddModal = (props) => {
     </div>
 
     return (
-        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Create' submitHandler={() => {
-            try {
-                if (isFile) {
-                    props.currFolder.AddFile(name);
-                }
-                else {
-                    props.currFolder.AddFolder(name);
-                }
-
-                props.modalOpenState(false);
-                props.handleCurrFolder(clone(props.currFolder));
-            }
-            catch (err) {
-                var msg = ''
-                if (err === 'No name given')
-                    msg = 'Enter a value for the name'
-                else if (err === 'Duplicate')
-                    msg = name + " already exists"
-                setErrorMessage(msg);
-            }
-
-        }} />
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Create' submitHandler={handleAdd} />
     );
 }
 

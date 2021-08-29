@@ -10,15 +10,11 @@ import {
 function App() {
 
   var root = new Folder('root', null);
-  var home = root.AddFolder("Home");
-  var usr = home.AddFolder("Usr");
-  root.AddFile('index.js');
-  root.AddFile('sample.pdf');
-  const [currFolder, setCurrFolder] = useState(usr);
+  const [currFolder, setCurrFolder] = useState(root);
   const [isOpen, setOpenState] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  var [navStack, setNavStack] = useState([root, home, usr])
+  var [navStack, setNavStack] = useState([root])
 
   function handleCurrFolder(newCurrFolder) {
     setCurrFolder(newCurrFolder);
@@ -35,7 +31,7 @@ function App() {
 
   return (
     <div>
-      <NavBarBlock stack={navStack} handleNavStack={handleNavStack} />
+      <NavBarBlock stack={navStack} handleNavStack={handleNavStack} handleCurrFolder={handleCurrFolder} />
       <ContentBlock content={currFolder} stack={navStack} handleSelected={handleSelected} handleNavStack={handleNavStack} modalOpenState={setOpenState} handleCurrFolder={handleCurrFolder} />
       {isOpen && <RenameModalManager selected={selected} modalOpenState={setOpenState} handleCurrFolder={handleCurrFolder} />}
     </div >
