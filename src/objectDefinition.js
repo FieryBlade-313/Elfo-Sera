@@ -1,5 +1,7 @@
 class ContentClass {
     constructor(name, parent, type) {
+        if (name === '')
+            throw 'No name given';
         this.name = name;
         this.parent = parent != null ? parent : this;
         this.type = type;
@@ -16,8 +18,12 @@ class File extends ContentClass {
     }
 
     Rename(name) {
+        if (name === this.name)
+            return;
         if (name in this.parent.files)
             throw "Duplicate"
+        else if (name === '')
+            throw "No name given";
         else {
             delete this.parent.files[this.name];
             super.Rename(name);
@@ -45,8 +51,12 @@ class Folder extends ContentClass {
     }
 
     Rename(name) {
+        if (name === this.name)
+            return;
         if (name in this.parent.folders)
             throw "Duplicate";
+        else if (name === '')
+            throw "No name given";
         else {
             delete this.parent.folders[this.name];
             super.Rename(name);
@@ -75,6 +85,10 @@ class Folder extends ContentClass {
             this.files[name] = new File(name, this);
             return this.files[name]
         }
+    }
+
+    GetExtension() {
+        return '';
     }
 
     DebugDisplay() {

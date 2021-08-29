@@ -7,6 +7,10 @@ import backBtn from './assets/arrow_up.png'
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import { useState } from 'react'
 
+const clone = (obj) => {
+    return Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj))
+}
+
 const NavBarElement = (props) => {
     return (
         <div className='navBarElement' style={{ color: (props.last ? '#2E2F2F' : '#858B8F') }}>
@@ -22,7 +26,12 @@ const BackButton = (props) => {
             maxWidth: '60px',
             margin: '10px 6px',
             transform: 'Rotate(-90deg)',
-        }} src={backBtn} alt={props.type} />
+        }} src={backBtn} alt={props.type} onClick={(e) => {
+            if (props.stack.length > 1) {
+                props.stack.pop();
+                props.handleNavStack([...props.stack]);
+            }
+        }} />
     )
 }
 
@@ -31,13 +40,18 @@ const ContentObject = (props) => {
     return (
         <div>
             <ContextMenuTrigger id={"contentOptions" + props.i}>
-                <div className='content'>
-                    <ContentImage type={props.type} extension={props.extension} />
-                    <span>{props.name}</span>
+                <div className='content' onDoubleClick={(e) => {
+                    if (props.content.type === 'folder') {
+                        props.stack.push(props.content);
+                        props.handleNavStack([...props.stack]);
+                    }
+                }}>
+                    <ContentImage type={props.content.type} extension={props.content.GetExtension()} />
+                    <span>{props.content.name}</span>
                 </div>
             </ContextMenuTrigger>
 
-            <ContextMenuBlock modalOpenState={props.modalOpenState} i={props.i} />
+            <ContextMenuBlock handleSelected={props.handleSelected} currFolder={props.currFolder} handleCurrFolder={props.handleCurrFolder} content={props.content} modalOpenState={props.modalOpenState} i={props.i} />
         </div>
     );
 }
@@ -45,10 +59,14 @@ const ContentObject = (props) => {
 const ContextMenuBlock = (props) => {
 
     const handleClick = (e, data) => {
-        if (data.action === 'rename')
+        if (data.action === 'rename') {
+            props.handleSelected(props.content);
             props.modalOpenState(true);
-        else if (data.action === 'delete')
-            console.log('delete')
+        }
+        else if (data.action === 'delete') {
+            props.content.Delete();
+            props.handleCurrFolder(clone(props.currFolder));
+        }
     }
 
     return (
@@ -120,6 +138,7 @@ const AddContent = (props) => {
 const RenameModal = (props) => {
 
     const [name, setName] = useState('');
+    const [errMessage, setErrorMessage] = useState('');
 
     const modalContent = <div style={{
         display: 'flex',
@@ -128,16 +147,38 @@ const RenameModal = (props) => {
     }}>
         <h3>Rename</h3>
         <input placeholder='name' onChange={(e) => setName(e.target.value)}></input>
+        <div style={{
+            color: 'red',
+            fontSize: '0.8em',
+            alignSelf: 'flex-start',
+        }}>{errMessage}</div>
     </div>
 
     return (
-        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Rename' submitHandler={() => console.log(name)} />
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Rename' submitHandler={() => {
+            try {
+
+                props.selected.Rename(name);
+
+                props.modalOpenState(false);
+                props.handleCurrFolder(clone(props.currFolder));
+            }
+            catch (err) {
+                var msg = ''
+                if (err === 'No name given')
+                    msg = 'Enter a value for the name'
+                else if (err === 'Duplicate')
+                    msg = name + " already exists"
+                setErrorMessage(msg);
+            }
+        }} />
     );
 }
 
 const AddModal = (props) => {
 
     const [name, setName] = useState('');
+    const [errMessage, setErrorMessage] = useState('');
     const [isFile, setFileSelectState] = useState(true);
     const selectedColor = '#4AB7FF';
     const defaultColor = '#F0F0F0';
@@ -161,10 +202,37 @@ const AddModal = (props) => {
             }} onClick={(e) => setFileSelectState(false)}>Folder</div>
         </div>
         <input placeholder={((isFile) ? 'file' : 'folder') + ' name'} onChange={(e) => setName(e.target.value)}></input>
+        <div style={{
+            color: 'red',
+            fontSize: '0.8em',
+            alignSelf: 'flex-start',
+        }}>{errMessage}</div>
+
     </div>
 
     return (
-        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Create' submitHandler={() => console.log(name)} />
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Create' submitHandler={() => {
+            try {
+                if (isFile) {
+                    props.currFolder.AddFile(name);
+                }
+                else {
+                    props.currFolder.AddFolder(name);
+                }
+
+                props.modalOpenState(false);
+                props.handleCurrFolder(clone(props.currFolder));
+            }
+            catch (err) {
+                var msg = ''
+                if (err === 'No name given')
+                    msg = 'Enter a value for the name'
+                else if (err === 'Duplicate')
+                    msg = name + " already exists"
+                setErrorMessage(msg);
+            }
+
+        }} />
     );
 }
 
