@@ -1,0 +1,34 @@
+.backgroundModal {
+    position: absolute;
+    top:0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px) grayscale(30%);
+}
+.modal {
+    display: flex;
+    padding: '10px';
+    flex-direction: column;
+    align-items: center;
+    min-width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.37);
+}
+
+.submit {
+    color: white;
+    background-color: #3b8abe;
+    padding: 8px 12px;
+    margin: 10px;
+    display: block;
+    font-family: Consolas;
+    border: 0px;
+}
+
+.submit:active {
+    background-color: #154363;
+}

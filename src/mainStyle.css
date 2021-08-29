@@ -22,6 +22,10 @@
     background-color: rgb(235, 235, 235);
 }
 
+.content:active {
+    background-color: rgba(135, 207, 207, 0.705);
+}
+
 .addButton {
     display: flex;
     width: 150px;
@@ -30,6 +34,12 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    filter: contrast(1);
+    transition: all 0.4s;
+}
+
+.addButton:hover {
+    filter: contrast(0.8);
 }
 
 .optionHolder {
@@ -49,4 +59,21 @@
 
 .contextOption:hover {
     background-color: #EEEFF1;
+}
+
+.contentSelector {
+    padding: 2px 10px;
+    display: inline-block;
+    border: solid 1px black;
+    text-align: center;
+    min-width: 50px;
+    transition: all 0.2s;
+}
+
+.contentSelectorFile {
+    border-radius: 5px 0 0 5px;
+}
+
+.contentSelectorFolder {
+    border-radius: 0 5px 5px 0;
 }

@@ -1,9 +1,11 @@
 import './mainStyle.css'
+import Modal from './Modal'
 import folderImg from './assets/folder.png'
 import fileImg from './assets/file.png'
 import newButtonImg from './assets/add_new_button.png'
 import backBtn from './assets/arrow_up.png'
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+import { useState } from 'react'
 
 const NavBarElement = (props) => {
     return (
@@ -28,25 +30,33 @@ const ContentObject = (props) => {
 
     return (
         <div>
-            <ContextMenuTrigger id="contentOptions">
+            <ContextMenuTrigger id={"contentOptions" + props.i}>
                 <div className='content'>
                     <ContentImage type={props.type} extension={props.extension} />
                     <span>{props.name}</span>
                 </div>
             </ContextMenuTrigger>
 
-            <ContextMenuBlock />
+            <ContextMenuBlock modalOpenState={props.modalOpenState} i={props.i} />
         </div>
     );
 }
 
-const ContextMenuBlock = () => {
+const ContextMenuBlock = (props) => {
+
+    const handleClick = (e, data) => {
+        if (data.action === 'rename')
+            props.modalOpenState(true);
+        else if (data.action === 'delete')
+            console.log('delete')
+    }
+
     return (
-        <ContextMenu id="contentOptions" className='optionHolder'>
-            <MenuItem data={{ action: 'rename' }}>
+        <ContextMenu id={"contentOptions" + props.i} className='optionHolder'>
+            <MenuItem data={{ action: 'rename' }} onClick={handleClick}>
                 <div className='contextOption'>Rename</div>
             </MenuItem>
-            <MenuItem data={{ foo: 'delete' }}>
+            <MenuItem data={{ action: 'delete' }} onClick={handleClick}>
                 <div className='contextOption' style={{ color: '#FF5B45' }}>Delete</div>
             </MenuItem>
         </ContextMenu>
@@ -93,7 +103,7 @@ const ContentImage = (props) => {
     );
 }
 
-const AddContent = () => {
+const AddContent = (props) => {
 
     return (
         <div className='addButton'>
@@ -102,8 +112,59 @@ const AddContent = () => {
                 maxWidth: '100px',
                 margin: '5px 0',
                 display: 'block',
-            }} src={newButtonImg} alt='add' />
+            }} src={newButtonImg} alt='add' onClick={(e) => props.modalOpenState(true)} />
         </div>
+    );
+}
+
+const RenameModal = (props) => {
+
+    const [name, setName] = useState('');
+
+    const modalContent = <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    }}>
+        <h3>Rename</h3>
+        <input placeholder='name' onChange={(e) => setName(e.target.value)}></input>
+    </div>
+
+    return (
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Rename' submitHandler={() => console.log(name)} />
+    );
+}
+
+const AddModal = (props) => {
+
+    const [name, setName] = useState('');
+    const [isFile, setFileSelectState] = useState(true);
+    const selectedColor = '#4AB7FF';
+    const defaultColor = '#F0F0F0';
+
+    const modalContent = <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    }}>
+        <h3>Create New</h3>
+        <div style={{
+            margin: '10px',
+        }}>
+            <div className='contentSelector contentSelectorFile' style={{
+                backgroundColor: isFile ? selectedColor : defaultColor,
+                color: isFile ? 'white' : 'black',
+            }} onClick={(e) => setFileSelectState(true)}>File</div>
+            <div className='contentSelector  contentSelectorFolder' style={{
+                backgroundColor: !isFile ? selectedColor : defaultColor,
+                color: !isFile ? 'white' : 'black',
+            }} onClick={(e) => setFileSelectState(false)}>Folder</div>
+        </div>
+        <input placeholder={((isFile) ? 'file' : 'folder') + ' name'} onChange={(e) => setName(e.target.value)}></input>
+    </div>
+
+    return (
+        <Modal modalOpenState={props.modalOpenState} modalContent={modalContent} buttonText='Create' submitHandler={() => console.log(name)} />
     );
 }
 
@@ -112,4 +173,6 @@ export {
     ContentObject,
     AddContent,
     BackButton,
+    RenameModal,
+    AddModal,
 };

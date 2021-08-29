@@ -1,11 +1,21 @@
-import { NavBarBlock, ContentBlock } from './componentBlock'
+import { useState } from 'react';
+import {
+  NavBarBlock,
+  ContentBlock,
+  RenameModalManager,
+} from './componentBlock'
+
 
 function App() {
+
+  const [isOpen, setOpenState] = useState(false);
+
   return (
     <div>
       <NavBarBlock names={['root', 'home', 'usr']} />
-      <ContentBlock content={[{ name: "Home", type: "folder" }, { name: "index.js", type: 'file', extension: '.js' }]} />
-    </div>
+      <ContentBlock content={[]} modalOpenState={setOpenState} />
+      {isOpen && <RenameModalManager modalOpenState={setOpenState} />}
+    </div >
   );
 }
 
